@@ -27,7 +27,7 @@ class Training:
     """Базовый класс тренировки."""
     LEN_STEP: float = 0.65
     M_IN_KM: int = 1000
-    MIN_IN_H: int = 60
+    MIN_IN_HOUR: int = 60
 
     def __init__(self,
                  action: int,
@@ -64,10 +64,11 @@ class Running(Training):
 
     def get_spent_calories(self) -> float:
         """Получаем количество затраченных калорий во время бега."""
-        return ((self.CALORIES_MEAN_SPEED_MULTIPLIER * self.get_mean_speed() + self.CALORIES_MEAN_SPEED_SHIFT)
+        return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
+                 * self.get_mean_speed()
+                 + self.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight_kg / self.M_IN_KM
-                * self.duration_hour * self.MIN_IN_H)
-
+                * self.duration_hour * self.MIN_IN_HOUR)
 
 
 class SportsWalking(Training):
@@ -88,9 +89,11 @@ class SportsWalking(Training):
 
     def get_spent_calories(self) -> float:
         return ((self.COEFF_CALORIE_1 * self.weight_kg
-                 + ((self.KMH_IN_MSEC * self.get_mean_speed()) ** 2 / self.height_cm)
-                 * self.COEFF_CALORIE_2 * self.weight_kg)
-                * self.duration_hour * self.MIN_IN_H)
+                 + ((self.KMH_IN_MSEC
+                    * self.get_mean_speed()) ** 2 / self.height_cm)
+                * self.COEFF_CALORIE_2 * self.weight_kg)
+                * self.duration_hour * self.MIN_IN_HOUR)
+
 
 class Swimming(Training):
     LEN_STEP: float = 1.38
@@ -134,17 +137,16 @@ def read_package(workout_type: str, data: list[int]) -> Training:
 
 def main(training: Training) -> None:
     """Главная функция."""
-    info: InfoMessage = training.show_training_info()
-    print(info.get_message())
+    print(training.show_training_info().get_message())
 
 
 if __name__ == '__main__':
-    packages: list[tuple[str, list[int]]] = [
-            ('SWM', [720, 1, 80, 25, 40]),
-            ('RUN', [15000, 1, 75]),
-            ('WLK', [9000, 1, 75, 180]),
-        ]
-
+    # убрал типы
+    packages = [
+        ('SWM', [720, 1, 80, 25, 40]),
+        ('RUN', [15000, 1, 75]),
+        ('WLK', [9000, 1, 75, 180]),
+    ]
     for workout_type, data in packages:
         training: Training = read_package(workout_type, data)
         main(training)
